@@ -40,9 +40,10 @@ const App = () => {
 
   return (
     <div>
+      {/*
       <h1>Price Lists</h1>
       <PriceList items={pricelists} /> {/* Passing the data as props to PriceList */}
-      <h1>Space Travel Listings</h1>
+      <h2 style={{ textAlign: 'center'}}>Space Travel Listings</h2>
       <Travel items={travels} />
     </div>
     
