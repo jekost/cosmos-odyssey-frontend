@@ -21,7 +21,7 @@ const PriceList = ({ items }) => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
   };
 
-  return (
+  return ( 
     <div>
       <div>
         <button onClick={() => sortData('validUntil')}>Sort by Valid Until</button>

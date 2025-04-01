@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { DateTime, Duration } from 'luxon';
+import { Duration } from 'luxon';
+import { useCart } from '../context/CartContext';
+
 
 const travelRoutes = {
   "Mercury": ["Venus"],
@@ -12,7 +14,7 @@ const travelRoutes = {
   "Neptune": ["Mercury", "Uranus"]
 };
 
-const Travel = ({ items }) => {
+const Travel = ({items}) => {
   const [sortedItems, setSortedItems] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
   const [sortKey, setSortKey] = useState(null);
@@ -23,6 +25,11 @@ const Travel = ({ items }) => {
   const [toOptions, setToOptions] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [companyOptions, setCompanyOptions] = useState([]);
+  const [onlyValidToggled, setOnlyValidToggled] = useState(false);
+
+
+  const { cart, addToCart, removeFromCart } = useCart();
+
 
   const columnNames = {
     offerId: "Offer ID",
@@ -40,7 +47,7 @@ const Travel = ({ items }) => {
     const travelsData = items.map((item) => ({
       offerId: item.offerId,
       priceListId: item.priceListId,
-      validUntil: new Date(item.validUntil),
+      //validUntil: new Date(item.validUntil),
       legId: item.legId,
       fromName: item.fromName,
       toName: item.toName,
@@ -95,11 +102,19 @@ const Travel = ({ items }) => {
     });
   };
 
-  const filteredTravels = sortedItems.filter(travel =>
-    (!searchFrom || travel.fromName === searchFrom) &&
-    (!searchTo || travel.toName === searchTo) &&
-    (!searchCompany || travel.companyName === searchCompany)
-  );
+  /*
+  const toggleValid = () => {
+    setOnlyValidToggled(!onlyValidToggled);
+  };*/
+
+  const filteredTravels = sortedItems.filter(travel => {
+    /*console.log(!onlyValidToggled);*/
+    return ((!searchFrom || travel.fromName === searchFrom) &&
+           (!searchTo || travel.toName === searchTo) &&
+           (!searchCompany || travel.companyName === searchCompany)
+            //&& (!onlyValidToggled || (travel.validUntil > new Dat())));
+          )
+});
 
   return (
     <div style={{fontSize: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
@@ -173,15 +188,6 @@ const Travel = ({ items }) => {
     ))}
   </select>
 </div>
-        <button onClick={() => sortData('validUntil')}
-          style={{
-            border: '1px solid #666666',
-            fontSize: '12px'
-          }}
-          onMouseEnter={(e) => e.target.style.background = '#d2d2d2'}
-          onMouseLeave={(e) => e.target.style.background = '#f2f2f2'}>
-          Sort by Valid Until
-        </button>
       </div>
       {filteredTravels.length > 0 && (
         <>
@@ -189,7 +195,8 @@ const Travel = ({ items }) => {
           <thead>
             <tr>
               <th>Sort by:</th>
-              {['offerId', 'fromName', 'toName', 'distance', 'price', 'flightStart', 'flightEnd', 'companyName', 'flightDuration'].map((key) => (
+              {['offerId', 'fromName', 'toName', 'distance', 'price', 'flightStart', 'flightEnd', 'companyName', 'flightDuration'
+              ].map((key) => (
                 <th key={key}>
                   <button 
                     onClick={() => sortData(key)} 
@@ -205,26 +212,43 @@ const Travel = ({ items }) => {
                   </button>
                 </th>
               ))}
+              <th>Buy Ticket</th>
             </tr>
           </thead>
           <tbody>
-              {filteredTravels.slice(0, visibleCount).map((travel, index) => {
-                const isValid = travel.validUntil > new Date();
-                return (
-                  <tr key={travel.offerId} style={{backgroundColor: isValid ? 'lightgreen' : 'transparent'   }}>
-                    <td>{index + 1}</td>
-                    <td>{travel.offerId}</td>
-                    <td>{travel.fromName}</td>
-                    <td>{travel.toName}</td>
-                    <td>{travel.distance}</td>
-                    <td>{travel.price.toFixed(2)}</td>
-                    <td>{travel.flightStart.toLocaleString()}</td>
-                    <td>{travel.flightEnd.toLocaleString()}</td>
-                    <td>{travel.companyName}</td>
-                    <td>{Duration.fromMillis(travel.flightDuration).toFormat("d 'days' h 'hours' m 'minutes'")}</td>
-                  </tr>
-                );
-              })}
+          {filteredTravels.length === 0 ? (
+            <tr>
+              <td colSpan="10" style={{ textAlign: 'center', fontWeight: 'bold' }}>No events found</td>
+            </tr>
+          ) : (
+            filteredTravels.slice(0, visibleCount).map((travel, index) => {
+              //const isValid = travel.validUntil > new Date();
+              const isValid = true;
+              return (
+                <tr key={travel.offerId} style={{ backgroundColor: isValid ? 'lightgreen' : 'transparent' }}>
+                  <td>{index + 1}</td>
+                  <td>{travel.offerId}</td>
+                  <td>{travel.fromName}</td>
+                  <td>{travel.toName}</td>
+                  <td>{travel.distance}</td>
+                  <td>{travel.price.toFixed(2)}</td>
+                  <td>{travel.flightStart.toLocaleString()}</td>
+                  <td>{travel.flightEnd.toLocaleString()}</td>
+                  <td>{travel.companyName}</td>
+                  <td>{Duration.fromMillis(travel.flightDuration).toFormat("d 'days' h 'hours' m 'minutes'")}</td>
+                  <td>
+
+                      {(
+                        isValid ? (  // ✅ Correct conditional check
+                          <button onClick={() => addToCart(travel)}>Add</button>
+                        ) : null  // ✅ If `isValid` is false, return `null` (renders nothing)
+                      )}
+
+                  </td>
+                </tr>
+              );
+            })
+          )}
             </tbody>
         </table>
         {visibleCount < filteredTravels.length && (
@@ -234,6 +258,9 @@ const Travel = ({ items }) => {
         )}
         </>
       )}
+      {filteredTravels.length <= 0}
+        <h1>{"No valid Travels found :("}</h1>
+      
     </div>
   );
 };
