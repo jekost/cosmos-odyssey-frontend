@@ -25,8 +25,6 @@ const Travel = ({items}) => {
   const [toOptions, setToOptions] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [companyOptions, setCompanyOptions] = useState([]);
-  const [onlyValidToggled, setOnlyValidToggled] = useState(false);
-
 
   const { cart, addToCart, removeFromCart } = useCart();
 
@@ -47,7 +45,6 @@ const Travel = ({items}) => {
     const travelsData = items.map((item) => ({
       offerId: item.offerId,
       priceListId: item.priceListId,
-      //validUntil: new Date(item.validUntil),
       legId: item.legId,
       fromName: item.fromName,
       toName: item.toName,
@@ -102,23 +99,16 @@ const Travel = ({items}) => {
     });
   };
 
-  /*
-  const toggleValid = () => {
-    setOnlyValidToggled(!onlyValidToggled);
-  };*/
-
   const filteredTravels = sortedItems.filter(travel => {
-    /*console.log(!onlyValidToggled);*/
     return ((!searchFrom || travel.fromName === searchFrom) &&
            (!searchTo || travel.toName === searchTo) &&
            (!searchCompany || travel.companyName === searchCompany)
-            //&& (!onlyValidToggled || (travel.validUntil > new Dat())));
           )
 });
 
   return (
-    <div style={{fontSize: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-      <h2>Search Travel</h2>
+    <div style={{fontSize: '13px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
+      <h3>Search Travel</h3>
       <div>
       <div style={{ marginBottom: '20px' }}>
   <select 
@@ -191,19 +181,15 @@ const Travel = ({items}) => {
       </div>
       {filteredTravels.length > 0 && (
         <>
-        <table border="1" style={{ marginTop: '20px', width: '80%', textAlign: 'center' }}>
+        <table border="2" style={{ marginTop: '20px', width: '80%', textAlign: 'center' }}>
           <thead>
             <tr>
-              <th>Sort by:</th>
-              {['offerId', 'fromName', 'toName', 'distance', 'price', 'flightStart', 'flightEnd', 'companyName', 'flightDuration'
+              <th>#</th>
+              {['companyName', 'fromName', 'toName', 'distance', 'price', 'flightStart', 'flightEnd', 'flightDuration'
               ].map((key) => (
                 <th key={key}>
                   <button 
                     onClick={() => sortData(key)} 
-                    style={{
-                      border: '1px solid #666666',
-                      fontSize: '12px'
-                    }}
 
                     onMouseEnter={(e) => e.target.style.background = '#d2d2d2'}
                     onMouseLeave={(e) => e.target.style.background = '#f2f2f2'}
@@ -212,7 +198,7 @@ const Travel = ({items}) => {
                   </button>
                 </th>
               ))}
-              <th>Buy Ticket</th>
+              <th>Add to cart</th>
             </tr>
           </thead>
           <tbody>
@@ -222,28 +208,25 @@ const Travel = ({items}) => {
             </tr>
           ) : (
             filteredTravels.slice(0, visibleCount).map((travel, index) => {
-              //const isValid = travel.validUntil > new Date();
-              const isValid = true;
               return (
-                <tr key={travel.offerId} style={{ backgroundColor: isValid ? 'lightgreen' : 'transparent' }}>
+                <tr key={travel.offerId} style={{backgroundColor: 'lightgreen'}}>
                   <td>{index + 1}</td>
-                  <td>{travel.offerId}</td>
+                  <td>{travel.companyName}</td>
                   <td>{travel.fromName}</td>
                   <td>{travel.toName}</td>
                   <td>{travel.distance}</td>
                   <td>{travel.price.toFixed(2)}</td>
                   <td>{travel.flightStart.toLocaleString()}</td>
                   <td>{travel.flightEnd.toLocaleString()}</td>
-                  <td>{travel.companyName}</td>
+
                   <td>{Duration.fromMillis(travel.flightDuration).toFormat("d 'days' h 'hours' m 'minutes'")}</td>
                   <td>
-
-                      {(
-                        isValid ? (  // ✅ Correct conditional check
-                          <button onClick={() => addToCart(travel)}>Add</button>
-                        ) : null  // ✅ If `isValid` is false, return `null` (renders nothing)
-                      )}
-
+                    <button onClick={() => addToCart(travel)}
+                      onMouseEnter={(e) => e.target.style.background = '#d2d2d2'}
+                      onMouseLeave={(e) => e.target.style.background = '#f2f2f2'}
+                    >
+                      Add
+                    </button>
                   </td>
                 </tr>
               );
@@ -256,11 +239,14 @@ const Travel = ({items}) => {
             Show More
           </button>
         )}
+        {visibleCount >= filteredTravels.length && (
+          <p>No more travels to load</p>
+        )}
         </>
       )}
-      {filteredTravels.length <= 0}
-        <h1>{"No valid Travels found :("}</h1>
-      
+      {filteredTravels.length < 0 && (
+        <p>No valid Travels found</p>
+      )}
     </div>
   );
 };

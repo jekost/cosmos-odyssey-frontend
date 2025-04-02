@@ -1,49 +1,79 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { Duration } from 'luxon';
 
 // Create the CartContext
 const CartContext = createContext();
 
+
 // CartProvider component to provide the context to children
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [totalPrice, setTotalPrice] = useState(2);
   const [totalDurationMillis, setTotalDurationMillis] = useState(2);
 
 
   const buyCart = async () => {
-    if (!cart || cart.length === 0) {
-      console.log("Your cart is empty. Add some items before buying.");
-      return;
+
+
+    setErrorMessage(''); // Clear previous errors
+    if (!firstName.trim() || !lastName.trim()) {
+        setErrorMessage("First Name and Last Name are required for booking.");
+        return;
     }
-  
+
+    if (!cart || cart.length === 0) {
+        console.log("Your cart is empty. Add some items before buying.");
+        return;
+    }
+
     console.log("Processing your purchase...");
-  
-    cart.forEach(item => {
-      console.log(`Purchasing ${item.amount}x ${item.companyName} flight from ${item.fromName} to ${item.toName} for $${(item.amount * item.price).toFixed(2)}`);
-    });
-  
-    console.log(`Total cost: $${totalPrice.toFixed(2)}`);
-    console.log(`Total flight duration: ${Duration.fromMillis(totalDurationMillis).toFormat('hh:mm:ss')}`);
-  
-  
-    // Clear the cart after purchase
+
+    const bookings = cart.map(item => ({
+        priceListId: item.priceListId,
+        offerId: item.offerId,
+        companyName: item.companyName,
+        fromName: item.fromName,
+        toName: item.toName,
+        amount: item.amount
+    }));
 
     try {
-      const response = await axios.post('http://localhost:5000/api/reservations', {
-        totalPrice,
-        totalDurationMillis,
-      });
-  
-      console.log("Purchase successful!", response.data);
-      setCart([]); // Clear the cart after purchase
+
+
+        const responseGetPricelists = await axios.get('http://localhost:5000/api/pricelists');
+        
+        // Sort manually by 'createdAt' in descending order
+        const priceLists = responseGetPricelists.data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        const oldestMatchingPriceListId = priceLists.find(priceList => 
+            bookings.some(booking => booking.priceListId === priceList.id)
+        )?.id;
+      
+        console.log("oldest matching id:",oldestMatchingPriceListId);
+
+
+        const responsePostReservations = await axios.post('http://localhost:5000/api/reservations', {
+            firstName: firstName, // Replace with dynamic user input
+            lastName: lastName,  // Replace with dynamic user input
+            totalPrice: totalPrice,
+            totalDurationMillis: totalDurationMillis, // Convert ms to hours
+            oldestPriceListId: oldestMatchingPriceListId,
+            bookings
+        });
+
+        console.log("Purchase successful!", responsePostReservations.data);
+        setFirstName('');
+        setLastName('');
+        setCart([]); // Clear the cart after purchase
     } catch (error) {
-      console.error("Error during purchase:", error.response?.data || error.message);
+        console.error("Error during purchase:", error.responsePostReservations?.data || error.message);
     }
-    setCart([]);
-  };
+};
 
   // Function to add an item to the cart
   const addToCart = (item) => {
@@ -67,6 +97,7 @@ export const CartProvider = ({ children }) => {
           // If it doesn't exist, create a new cart item
           const newCartItem = {
             offerId: item.offerId,
+            priceListId: item.priceListId,
             companyName: item.companyName,
             fromName: item.fromName,
             toName: item.toName,
@@ -93,6 +124,19 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const removeOne = (offerId) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) => {
+          if (item.offerId === offerId) {
+            return item.amount > 1 ? { ...item, amount: item.amount - 1 } : null;
+          }
+          return item;
+        })
+        .filter((item) => item !== null)
+    );
+  };
+
   useEffect(() => {
     const newTotalPrice = cart.reduce((acc, item) => acc + item.amount * item.price, 0);
     const newTotalDurationMillis = cart.reduce((acc, item) => acc + item.amount * item.flightDuration, 0);
@@ -102,7 +146,7 @@ export const CartProvider = ({ children }) => {
   }, [cart]); // Runs whenever the cart changes
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, buyCart, totalPrice, totalDurationMillis }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, removeOne, buyCart, totalPrice, totalDurationMillis, setFirstName, setLastName, errorMessage }}>
       {children}
     </CartContext.Provider>
   );
