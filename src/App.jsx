@@ -3,40 +3,46 @@ import axios from 'axios';
 import Travel from './components/Travel'; // Importing the PriceList component
 import Cart from './components/Cart';
 import { CartProvider } from './context/CartContext';
+import { TravelProvider } from './context/TravelContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './components/Header';
+const env = await import.meta.env;
+const url = (env.VITE_API_URL);
 
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [travelsValid, setTravelsValid] = useState([]);
+  const [items, setItems] = useState([]);
 
-  // Fetch data from the API when the component mounts
   useEffect(() => {
       axios
-      .get('http://localhost:5000/api/travels/valid')
+      .get(`${url}/api/travels/valid`)
       .then((response) => {
-        setTravelsValid(response.data);  // Set the fetched data into state
-        setLoading(false);         // Set loading to false once data is fetched
+        setItems(response.data);
+        setLoading(false);
       })
       .catch((error) => {
-        setError(error.message);   // Set the error message if an error occurs
-        setLoading(false);         // Set loading to false if there's an error
+        setError(error.message);
+        setLoading(false);
       });
 
 
-  }, []); // Empty dependency array, this runs only once when the component mounts
+  }, []);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
-      <h1 style={{ textAlign: 'center'}}>Space Travel Listings</h1>
+      <Header />
+      <TravelProvider items={items}>
       <CartProvider>
-        <Cart />
-        <Travel items={travelsValid} />
-
+          <Cart />
+          <hr />
+          <Travel/>
       </CartProvider>
+      </TravelProvider>
+
     </div>
   );
 };

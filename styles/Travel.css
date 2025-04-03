@@ -1,0 +1,103 @@
+/* Container */
+.container {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* Filters */
+  .filters-container {
+    margin-bottom: 10px;
+  }
+  
+  /* Dropdown */
+  .dropdown {
+    padding: 10px 15px;
+    font-size: 12px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    background: #f2f2f2;
+    color: #000;
+    cursor: pointer;
+    width: 200px;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  /* Table */
+  .table {
+    margin-top: 20px;
+    width: 90%;
+    text-align: center;
+    border-collapse: collapse;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th, .table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .even-row {
+    background-color: #f9f9f9;
+    transition: 0.3s;
+  }
+  
+  .odd-row {
+    background-color: #fff;
+    transition: 0.3s;
+  }
+  
+  .table tr:hover {
+    background-color: #e0f7fa;
+  }
+  
+  /* Sort Button */
+  .sort-button {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .sort-button:hover {
+    color: #007bff;
+  }
+  
+  /* Add Button */
+  .add-button {
+    cursor: pointer;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #25aa44;
+    color: #ffffff;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .add-button:hover {
+    background: #0f852b;
+  }
+  
+  /* Show More Button */
+  .show-more-button {
+    margin: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    background: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .show-more-button:hover {
+    background: #014288;
+  }
