@@ -39,14 +39,22 @@ export const Cart = () => {
         try {
 
             //check if purchase has any bookings from invalid pricelists
-            const response = await axios.get(`${url}/api/pricelists/invalid`);    
-            const invalidPriceListIds = response.data.map(pricelist => pricelist.id);
-            bookings.reduce((booking) => {
-                if (invalidPriceListIds.includes(booking.priceListId)) {
-                    setErrorMessage("You tried to purchase a ticket that from a previous pricelist")
-                    throw Error;
-                }
-            }, 0);
+            try{
+                const response = await axios.get(`${url}/api/pricelists/invalid`);    
+                const invalidPriceListIds = response.data.map(pricelist => pricelist.id);
+                bookings.reduce((booking) => {
+                    if (invalidPriceListIds.includes(booking.priceListId)) {
+                        setErrorMessage("You tried to purchase a ticket that from a previous pricelist")
+                        throw Error;
+                    }
+                }, 0);
+            }catch (error){
+                //if it gets here this probably means there are no invalid pricelist ids => no invalid travels in cart
+                true;
+            }
+            
+    
+
 
             //get the pricelist id which is gonna expire the earliest, later we will delete invalid bookings using this value
             const responseGetPricelists = await axios.get(`${url}/api/pricelists`);
@@ -58,7 +66,7 @@ export const Cart = () => {
             const responsePostReservations = await axios.post(`${url}/api/reservations`, {
                 firstName: firstName,
                 lastName: lastName,
-                totalPrice: totalPrice,
+                totalPrice: totalPrice.toFixed(2),
                 totalDurationMillis: totalDurationMillis,
                 oldestPriceListId: oldestMatchingPriceListId,
                 bookings
