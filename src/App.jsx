@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Travel from './components/Travel'; // Importing the PriceList component
+import Travel from './components/Travel';
 import Cart from './components/Cart';
 import { CartProvider } from './context/CartContext';
 import { TravelProvider } from './context/TravelContext';

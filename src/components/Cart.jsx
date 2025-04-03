@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Duration } from 'luxon';
-import { useCart } from '../context/CartContext.jsx'; // Adjust path as needed
+import { useCart } from '../context/CartContext.jsx';
 import '../../styles/Cart.css';
 const env = await import.meta.env;
 const url = env.VITE_API_URL;
@@ -16,7 +16,7 @@ export const Cart = () => {
     const [lastName, setLastName] = useState('');
 
     const buyCart = async () => {
-        setErrorMessage(''); // Clear previous errors
+        setErrorMessage('');
         if (!firstName.trim() || !lastName.trim()) {
             setErrorMessage("First Name and Last Name are required for booking.");
             return;

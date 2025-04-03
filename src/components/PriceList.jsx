@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 
 const PriceList = ({ items }) => {
   const [sortedItems, setSortedItems] = useState(items);
-  const [sortOrder, setSortOrder] = useState('asc'); // Track sorting order
+  const [sortOrder, setSortOrder] = useState('asc');
 
-  // Sort function to sort data by a specific key and toggle asc/desc
   const sortData = (key) => {
     const sorted = [...sortedItems].sort((a, b) => {
       const dateA = new Date(a[key]);
       const dateB = new Date(b[key]);
 
       if (sortOrder === 'asc') {
-        return dateA - dateB; // Ascending
+        return dateA - dateB;
       } else {
-        return dateB - dateA; // Descending
+        return dateB - dateA;
       }
     });
 
-    setSortedItems(sorted); // Update state with sorted data
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+    setSortedItems(sorted);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   return ( 
@@ -41,11 +40,11 @@ const PriceList = ({ items }) => {
         <tbody>
           {sortedItems.map((item, index) => (
             <tr key={item.id}>
-              <td>{index + 1}</td> {/* Counter Column */}
+              <td>{index + 1}</td>
               <td>{item.id}</td>
-              <td>{new Date(item.validUntil).toLocaleString()}</td> {/* Format date */}
-              <td>{new Date(item.createdAt).toLocaleString()}</td> {/* Format date */}
-              <td>{new Date(item.updatedAt).toLocaleString()}</td> {/* Format date */}
+              <td>{new Date(item.validUntil).toLocaleString()}</td>
+              <td>{new Date(item.createdAt).toLocaleString()}</td>
+              <td>{new Date(item.updatedAt).toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
