@@ -16,7 +16,7 @@ const App = () => {
 
   useEffect(() => {
       axios
-      .get(`${url}/api/travels/valid`)
+      .get(`${url}/api/offersvalid`)
       .then((response) => {
         setItems(response.data);
         setLoading(false);

@@ -30,7 +30,7 @@ export const Cart = () => {
         const bookings = cart.map(item => ({
             priceListId: item.priceListId,
             offerId: item.offerId,
-            companyName: item.companyName,
+            companyName: item.company.name,
             fromName: item.fromName,
             toName: item.toName,
             amount: item.amount

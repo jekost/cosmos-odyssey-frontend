@@ -26,13 +26,13 @@ export const TravelProvider = ({ children, items }) => {
 
   const columnNames = {
     offerId: "Offer ID",
-    fromName: "From",
-    toName: "To",
+    planetFrom: "From",
+    planetTo: "To",
     distance: "Distance",
     price: "Price",
     flightStart: "Flight Start",
     flightEnd: "Flight End",
-    companyName: "Company Name",
+    company: "Company Name",
     flightDuration: "Flight Duration",
   };
 
@@ -65,16 +65,22 @@ export const TravelProvider = ({ children, items }) => {
     const order = sortKey === key && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(order);
     setSortedItems((prevItems) => {
+      //console.log(prevItems);
+      //console.log(key);
       return [...prevItems].sort((a, b) => {
         if (a[key] instanceof Date && b[key] instanceof Date) {
+          //console.log(a[key]);
           return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
         }
         if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+          //console.log(a[key]);
           return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
         }
         if (typeof a[key] === 'string' && typeof b[key] === 'string') {
+          //console.log(a[key]);
           return order === 'asc' ? a[key].localeCompare(b[key]) : b[key].localeCompare(a[key]);
         }
+        //console.log(a[key]);
         return 0;
       });
     });
