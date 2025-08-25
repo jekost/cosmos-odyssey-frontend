@@ -1,12 +1,63 @@
-# React + Vite
+# Cosmos Odyssey Web Application Front End
+The front end of a full-stack web application for seamless interplanetary travel booking.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Key Features
 
-Currently, two official plugins are available:
+### Data Handling
+- Retrieves travel data from an internal API and processes it into a readable format.
+- Stores data in a **PostgreSQL database** for easy access via API endpoints.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Interactive UI
+- Users can browse and filter travel options based on **departure, destination, price, company,** and more.
 
-## Expanding the ESLint configuration
+### Shopping & Checkout
+- Users can add trips to a **cart** and complete purchases using their **name and surname**.
+- Before checkout, the system **verifies if the price list is still valid** to prevent outdated transactions.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Purchase Records
+- All **completed purchases** are stored and accessible via API.
+
+### Data Storage & Expiration Handling
+- **Valid travel data** is stored indefinitely.
+- The system retains **the last 15 expired price lists** for reference.
+
+## Tech Stack
+- **Front End:** React + Vite  
+- **Back End:** Node.js, Sequelize  
+- **Database:** PostgreSQL  
+- **Automation:** Cron Job
+
+## Setup Guide using Node Package Manager & PostgreSQL
+- **Database**:
+make sure an empty PostgreSQL database using the name `cosmos_odyssey` exists
+  - `create database cosmos_odyssey;`
+- **Back End** `https://github.com/jekost/cosmos-odyssey-backend`:
+  - `npm install`
+  - `npm start`
+- **Front End** `https://github.com/jekost/cosmos-odyssey-frontend`:
+  - `npm install`
+  - `npm run dev`
+ 
+
+## Access points
+- Access the UI at `http://localhost:5173`
+- All current and last 15 pricelists are available here: `http://localhost:5000/api/pricelists`
+- All flights recorded during that time are here: `http://localhost:5000/api/travels`
+- And all purchases are accessible here: `http://localhost:5000/api/reservations`
+
+## Limitations
+- Currently the data retrieval is automated using Cron Job. This could very well be replaced with some checker that looks right after the current pricelist expires, however that may not always be the best case.
+
+
+
+## Seperate front end and back end (+db) repositories:
+
+https://github.com/jekost/cosmos-odyssey-backend
+
+https://github.com/jekost/cosmos-odyssey-frontend
+
+
+
+ 
+# Jan Erik Köst
+jan.erik.kost@hotmail.com

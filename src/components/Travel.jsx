@@ -13,7 +13,7 @@ const Travel = () => {
   const { 
     travelRoutes, filteredTravels, sortData, columnNames, sortOrder, sortKey, 
     searchFrom, setSearchFrom, searchTo, setSearchTo, searchCompany, setSearchCompany, 
-    toOptions, visibleCount, setVisibleCount, companyOptions 
+    fromOptions, setFromOptions, toOptions, visibleCount, setVisibleCount, companyOptions 
   } = useTravel();
   const { addToCart } = useCart();
 

@@ -19,8 +19,11 @@ export const TravelProvider = ({ children, items }) => {
   const [searchFrom, setSearchFrom] = useState('');
   const [searchTo, setSearchTo] = useState('');
   const [searchCompany, setSearchCompany] = useState('');
+
   const [fromOptions, setFromOptions] = useState([]);
   const [toOptions, setToOptions] = useState([]);
+
+
   const [visibleCount, setVisibleCount] = useState(10);
   const [companyOptions, setCompanyOptions] = useState([]);
 
@@ -45,51 +48,52 @@ export const TravelProvider = ({ children, items }) => {
       updatedAt: new Date(item.updatedAt),
     }));
     setSortedItems(travelsData);
-    setCompanyOptions([...new Set(travelsData.map(item => item.companyName))]);
+    setCompanyOptions([...new Set(travelsData.map(item => item.company))]);
   }, [items]);
 
-  useEffect(() => {
-    if (searchFrom) {
-      setToOptions(travelRoutes[searchFrom] || []);
-    } else if (searchTo) {
-      const availableFrom = Object.keys(travelRoutes).filter(from => travelRoutes[from].includes(searchTo));
-      setFromOptions(availableFrom);
-    } else {
-      setToOptions([]);
-      setFromOptions([]);
-    }
-  }, [searchFrom, searchTo]);
+  const planets = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"];
+
+  
+useEffect(() => {
+  if (searchFrom) {
+    // Show all planets except the one you’re coming from
+    setToOptions(planets.filter(p => p !== searchFrom));
+    setFromOptions(planets); // optional: keep this populated
+  } else if (searchTo) {
+    // Show all planets except the destination
+    setFromOptions(planets.filter(p => p !== searchTo));
+    setToOptions(planets); // optional: keep this populated
+  } else {
+    // Nothing selected yet
+    setToOptions([]);
+    setFromOptions([]);
+  }
+}, [searchFrom, searchTo]);
 
   const sortData = (key) => {
     setSortKey(key);
     const order = sortKey === key && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(order);
     setSortedItems((prevItems) => {
-      //console.log(prevItems);
-      //console.log(key);
       return [...prevItems].sort((a, b) => {
         if (a[key] instanceof Date && b[key] instanceof Date) {
-          //console.log(a[key]);
           return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
         }
         if (typeof a[key] === 'number' && typeof b[key] === 'number') {
-          //console.log(a[key]);
           return order === 'asc' ? a[key] - b[key] : b[key] - a[key];
         }
         if (typeof a[key] === 'string' && typeof b[key] === 'string') {
-          //console.log(a[key]);
           return order === 'asc' ? a[key].localeCompare(b[key]) : b[key].localeCompare(a[key]);
         }
-        //console.log(a[key]);
         return 0;
       });
     });
   };
 
   const filteredTravels = sortedItems.filter(travel => (
-    (!searchFrom || travel.fromName === searchFrom) &&
-    (!searchTo || travel.toName === searchTo) &&
-    (!searchCompany || travel.companyName === searchCompany)
+    (!searchFrom || travel.planetFrom === searchFrom) &&
+    (!searchTo || travel.planetTo === searchTo) &&
+    (!searchCompany || travel.company === searchCompany)
   ));
 
   return (

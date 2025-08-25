@@ -30,9 +30,9 @@ export const Cart = () => {
         const bookings = cart.map(item => ({
             priceListId: item.priceListId,
             offerId: item.offerId,
-            companyName: item.company.name,
-            fromName: item.fromName,
-            toName: item.toName,
+            company: item.company,
+            planetFrom: item.planetFrom,
+            planetTo: item.planetTo,
             amount: item.amount
         }));
 
@@ -63,16 +63,27 @@ export const Cart = () => {
                 bookings.some(booking => booking.priceListId === priceList.id)
             )?.id;
         
-            const responsePostReservations = await axios.post(`${url}/api/reservations`, {
-                firstName: firstName,
-                lastName: lastName,
-                totalPrice: totalPrice.toFixed(2),
-                totalDurationMillis: totalDurationMillis,
-                oldestPriceListId: oldestMatchingPriceListId,
-                bookings
-            });
+            console.log(firstName);
+            console.log(lastName);
+            console.log(totalPrice.toFixed(2));
+            console.log(totalDurationMillis);
+            console.log(oldestMatchingPriceListId);
+            console.log(bookings);
 
-            console.log("Purchase successful!", responsePostReservations.data);
+            try {
+                const responsePostReservations = await axios.post(`${url}/api/reservations`, {
+                    firstName: firstName,
+                    lastName: lastName,
+                    totalPrice: totalPrice,
+                    totalDurationMillis: totalDurationMillis,
+                    oldestPriceListId: oldestMatchingPriceListId,
+                    bookings
+
+                });
+                console.log("✅ Reservation created:", responsePostReservations.data);
+            } catch (err) {
+                console.error("❌ Error creating reservation:", err.response?.data || err.message);
+            }
 
 
             setFirstName('');
@@ -103,9 +114,9 @@ export const Cart = () => {
                 {[...cart, ...Array(Math.max(0, 3 - cart.length)).fill(null)].map((item, index) => (
                 <tr key={item ? item.offerId : `empty-${index}`}>
                     <td>{index + 1}</td>
-                    <td>{item?.companyName || ""}</td>
-                    <td>{item?.fromName || ""}</td>
-                    <td>{item?.toName || ""}</td>
+                    <td>{item?.company || ""}</td>
+                    <td>{item?.planetFrom || ""}</td>
+                    <td>{item?.planetTo || ""}</td>
                     <td>{item ? `€${item.price.toLocaleString(priceFormat, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""}</td>
                     <td>{item ? Duration.fromMillis(item.flightDuration).toFormat(durationFormat) : ""}</td>
                     <td>{item ? `€${(item.amount * item.price).toLocaleString(priceFormat, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ""}</td>

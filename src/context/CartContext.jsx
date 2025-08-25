@@ -28,9 +28,9 @@ export const CartProvider = ({ children}) => {
           const newCartItem = {
             offerId: item.offerId,
             priceListId: item.priceListId,
-            companyName: item.companyName,
-            fromName: item.fromName,
-            toName: item.toName,
+            company: item.company,
+            planetFrom: item.planetFrom,
+            planetTo: item.planetTo,
             price: item.price,
             flightDuration: item.flightDuration,
             amount: 1,
