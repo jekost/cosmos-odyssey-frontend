@@ -35,6 +35,7 @@ make sure an empty PostgreSQL database using the name `cosmos_odyssey` exists
   - `npm install`
   - `npm start`
 - **Front End** `https://github.com/jekost/cosmos-odyssey-frontend`:
+  - rename `env_example` to `.env`
   - `npm install`
   - `npm run dev`
  
